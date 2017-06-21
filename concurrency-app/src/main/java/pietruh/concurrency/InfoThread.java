@@ -1,5 +1,7 @@
 package pietruh.concurrency;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * Created by ppietrucha on 2017-06-21.
  */
@@ -7,8 +9,11 @@ public class InfoThread {
     private String name;
     private String stacktrace;
     private String state;
+    private transient DataProvider dataProvider;
+    
 
-    public InfoThread() {
+    public InfoThread(@Autowired DataProvider dataProvider) {
+        this.dataProvider = dataProvider;
     }
 
     public InfoThread(String name, String stacktrace, String state) {
@@ -27,6 +32,11 @@ public class InfoThread {
 
     public String getState() {
         return state;
+    }
+
+    public void inform() {
+
+//        dataProvider.
     }
 
     @Override

@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.management.ThreadInfo;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -14,8 +13,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/threads")
-public class ConcurrencyController {
-    private static final Logger log = LoggerFactory.getLogger(ConcurrencyController.class);
+public class ThreadsController {
+    private static final Logger log = LoggerFactory.getLogger(ThreadsController.class);
     Map<String, Thread> threads = new HashMap<>();
 
     @RequestMapping(method = RequestMethod.GET)
@@ -39,11 +38,6 @@ public class ConcurrencyController {
     @RequestMapping(method = RequestMethod.PUT)
     public void thread(@RequestBody InfoThread infoThread) {
         log.info("add (infoThread = [{}])", new Object[] { infoThread });
-
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public void translate() {
 
     }
 
