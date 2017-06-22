@@ -63,3 +63,4 @@ modules.xml
 # End of https://www.gitignore.io/api/intellij+imlconcurrency-app/target/
 .idea/
 concurrency-app/target/
+pos/target/
