@@ -22,7 +22,8 @@ public class ThreadsController {
         log.info("all threads");
         Set<Thread> threads = Thread.getAllStackTraces().keySet();
         List<InfoThread> collect = threads.stream()
-              .map(thread -> new InfoThread(thread.getName(), stacktraceToString(thread.getStackTrace()), thread.getState().name()))
+              .map(thread -> new InfoThread(thread.getName(), stacktraceToString(thread.getStackTrace()), thread.getState().name(), new Date(),
+                    new Random().nextInt(1000)))
               .collect(Collectors.toList());
         return collect;
     }
@@ -32,7 +33,7 @@ public class ThreadsController {
         log.info("get (name = [{}])", new Object[] { name });
         Optional<Thread> first = Thread.getAllStackTraces().keySet().stream().filter(thread -> thread.getName().equalsIgnoreCase(name)).findFirst();
         Thread thread = first.get();
-        return new InfoThread(thread.getName(), stacktraceToString(thread.getStackTrace()), thread.getState().name());
+        return new InfoThread(thread.getName(), stacktraceToString(thread.getStackTrace()), thread.getState().name(), new Date(), new Random().nextInt(1000));
     }
 
     @RequestMapping(method = RequestMethod.PUT)

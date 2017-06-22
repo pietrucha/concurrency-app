@@ -1,11 +1,13 @@
 package pietruh.concurrency;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Date;
 
 /**
  * Created by ppietrucha on 2017-06-21.
  */
 public class InfoThread {
+    private int votes;
+    private Date startDate;
     private String name;
     private String stacktrace;
     private String state;
@@ -13,10 +15,12 @@ public class InfoThread {
     public InfoThread() {
     }
 
-    public InfoThread(String name, String stacktrace, String state) {
+    public InfoThread(String name, String stacktrace, String state, Date start, int votes) {
         this.name = name;
         this.stacktrace = stacktrace;
         this.state = state;
+        this.startDate = start;
+        this.votes = votes;
     }
 
     public String getName() {
@@ -29,6 +33,14 @@ public class InfoThread {
 
     public String getState() {
         return state;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public int getVotes() {
+        return votes;
     }
 
     @Override
@@ -57,6 +69,6 @@ public class InfoThread {
 
     @Override
     public String toString() {
-        return "InfoThread{" + "name='" + name + '\'' + ", stacktrace='" + stacktrace + '\'' + ", state='" + state + '\'' + '}';
+        return "InfoThread{" + "startDate=" + startDate + ", name='" + name + '\'' + ", stacktrace='" + stacktrace + '\'' + ", state='" + state + '\'' + '}';
     }
 }
