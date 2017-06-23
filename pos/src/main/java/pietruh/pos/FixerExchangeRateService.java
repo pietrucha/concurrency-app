@@ -1,6 +1,9 @@
 package pietruh.pos;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -11,49 +14,49 @@ import org.apache.http.util.EntityUtils;
 import pietruh.pos.configuration.Constants;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.text.DateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Currency;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by pietruh on 23.06.2017.
  */
 public class FixerExchangeRateService implements ExchangeRateService {
 
-    //    JsonSerializer<LocalDate> js = (localDate, type, jsonSerializationContext) -> new JsonPrimitive(localDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
     JsonDeserializer<LocalDate> jd = (jsonElement, type, jsonDeserializationContext) -> LocalDate.parse(jsonElement.getAsString());
-    JsonDeserializer<Rate> rated = (jsonElement, type, jsonDeserializationContext) -> new Rate();
-    JsonDeserializer<Set<Rate>> rateSetd = (jsonElement, type, jsonDeserializationContext) -> new HashSet<>();
+    JsonDeserializer<Set<Rate>> rateSetd = (jsonElement, type, jsonDeserializationContext) -> ((JsonObject) jsonElement).entrySet().stream()
+          .map(e -> new Rate(Currency.getInstance(e.getKey()), e.getValue().getAsBigDecimal())).collect(Collectors.toSet());
 
     @Override
     public ExchangeRate getExchangeRate(Currency currency) {
-        HttpGet httpGet = new HttpGet(Constants.HTTP_API_FIXER_IO_LATEST);
+        HttpGet httpGet = new HttpGet(Constants.HTTP_API_FIXER_IO_LATEST + "?base=" + currency.getCurrencyCode());
+        return getExchangeRate(httpGet);
+    }
+
+    @Override
+    public ExchangeRate exchangeCurrency(Currency currency, List<Currency> exchangeCurrencies) {
+        HttpGet httpGet = new HttpGet(Constants.HTTP_API_FIXER_IO_LATEST + "?base=" + currency.getCurrencyCode() + "&symbols=" + exchangeCurrencies.stream()
+              .map(Currency::getCurrencyCode).collect(Collectors.joining()));
+        return getExchangeRate(httpGet);
+    }
+
+    private ExchangeRate getExchangeRate(HttpGet httpGet) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpResponse execute = httpClient.execute(httpGet);
             httpGet.getRequestLine();
             HttpEntity entity = execute.getEntity();
             String s = EntityUtils.toString(entity);
-            System.out.println(s);
-            Gson gson = new GsonBuilder().setPrettyPrinting()
-                  .registerTypeAdapter(LocalDate.class, jd)
-                  .registerTypeAdapter(Rate.class, rated)
-                  .registerTypeAdapter(new TypeToken<Set<Rate>>(){}.getType(), rated)
-                  .create();
+            Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(LocalDate.class, jd).registerTypeAdapter(new TypeToken<Set<Rate>>() {
+            }.getType(), rateSetd).create();
             ExchangeRate exchangeRate = gson.fromJson(s, ExchangeRate.class);
             System.out.println(exchangeRate);
+            return exchangeRate;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ExchangeRate exchangeRate = new ExchangeRate();
-        Set<Rate> rates = new HashSet<>();
-        rates.add(new Rate());
-        exchangeRate.setRates(rates);
-
-        return exchangeRate;
+        return new ExchangeRate();
     }
 
 }

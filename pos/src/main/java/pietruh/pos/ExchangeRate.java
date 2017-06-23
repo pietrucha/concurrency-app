@@ -40,4 +40,9 @@ public class ExchangeRate {
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
+    @Override
+    public String toString() {
+        return "ExchangeRate{" + "date=" + date + ", base=" + base + ", rates=" + rates + '}';
+    }
 }
