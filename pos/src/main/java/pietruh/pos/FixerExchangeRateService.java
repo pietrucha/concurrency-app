@@ -45,14 +45,10 @@ public class FixerExchangeRateService implements ExchangeRateService {
     private ExchangeRate getExchangeRate(HttpGet httpGet) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpResponse execute = httpClient.execute(httpGet);
-            httpGet.getRequestLine();
             HttpEntity entity = execute.getEntity();
-            String s = EntityUtils.toString(entity);
             Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(LocalDate.class, jd).registerTypeAdapter(new TypeToken<Set<Rate>>() {
             }.getType(), rateSetd).create();
-            ExchangeRate exchangeRate = gson.fromJson(s, ExchangeRate.class);
-            System.out.println(exchangeRate);
-            return exchangeRate;
+            return gson.fromJson(EntityUtils.toString(entity), ExchangeRate.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
