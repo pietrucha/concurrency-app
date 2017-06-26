@@ -64,3 +64,4 @@ modules.xml
 .idea/
 concurrency-app/target/
 pos/target/
+collectionconcurrency/target/
