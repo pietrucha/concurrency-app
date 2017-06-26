@@ -29,7 +29,6 @@ public class ExchangeRateTest {
         assertEquals(Currency.getInstance("EUR"), exchangeRateEUR.getBase());
 
         Set<Rate> rates = exchangeRatePLN.getRates();
-        assertEquals(LocalDate.now(), exchangeRatePLN.getDate());
         assertTrue(!rates.isEmpty());
     }
 
